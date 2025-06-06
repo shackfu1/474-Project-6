@@ -1,0 +1,6 @@
+testfs
+*.gch
+*.o
+*.a
+testfile
+testfile2
