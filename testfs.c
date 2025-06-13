@@ -54,6 +54,22 @@ void test_alloc(void){
 	CTEST_ASSERT(inodeblock2 > inodeblock1, "test to make sure the next block allocated after the first has a higher address number");
 }
 
+void test_inode(void){
+	struct inode *free_inode = incore_find_free();
+	CTEST_ASSERT(free_inode->ref_count == 0, "test to make sure incore_find_free works and returns a pointer to an inode struct");
+	free_inode->ref_count = 1;
+	free_inode->inode_num = 10;
+	struct inode *not_an_inode = incore_find(5);
+	CTEST_ASSERT(not_an_inode == NULL, "test to make sure incore_find returns NULL if there is no inode with that inode number");
+	struct inode *is_an_inode = incore_find(10);
+	CTEST_ASSERT(is_an_inode->inode_num == 10, "test to make sure incore_find is able to find an inode with a specific inode number");
+	incore_free_all();
+	CTEST_ASSERT(is_an_inode->ref_count == 0, "test to make sure incore_free_all resets the ref count of all inodes to 0");
+	struct inode empty;
+	read_inode(&empty, 5);
+	CTEST_ASSERT(empty.inode_num != 0, "test for read_inode");
+}
+
 int main(void)
 {
     CTEST_VERBOSE(1);
@@ -65,6 +81,8 @@ int main(void)
     test_free();
 
     test_alloc();
+
+    test_inode();
 
     CTEST_RESULTS();
 

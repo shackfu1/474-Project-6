@@ -2,11 +2,11 @@
 
 all: testfs
 
-test: testfs.o block.o image.o libvvsfs.a
+test: testfs.o block.o image.o free.o pack.o libvvsfs.a
 	gcc -DCTEST_ENABLE -o testfs $^
 	./testfs
 
-testfs: testfs.o block.o image.o libvvsfs.a
+testfs: testfs.o block.o image.o free.o pack.o libvvsfs.a
 	gcc -DCTEST_ENABLE -o $@ $^
 
 testfs.o: testfs.c
@@ -24,11 +24,14 @@ inode.o: inode.c inode.h
 free.o: free.c free.h
 	gcc -Wall -Wextra -c $^
 
-libvvsfs.a: testfs.o block.o image.o inode.o free.o
+pack.o: pack.c pack.h
+	gcc -Wall -Wextra -c $^
+
+libvvsfs.a: testfs.o block.o image.o inode.o free.o pack.o
 	ar rcs $@ $^
 
 clean:
-	rm -f tesfs.o block.o image.o inode.o free.o
+	rm -f tesfs.o block.o image.o inode.o free.o pack.o
 
 pristine:
-	rm -f testfs.o block.o image.o inode.o free.o libvvsfs.a testfs
+	rm -f testfs.o block.o image.o inode.o free.o pack.o libvvsfs.a testfs
